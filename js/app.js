@@ -1,10 +1,11 @@
-var miColor = $('.main-titulo').css('color');
-var min = 2;
-var seg = 0;
-var ori = "";
-var dst = "";
+var miColor = $('.main-titulo').css('color'); //Color Inicial de la etiqueta "Match Game" que permanecerá alternando durante la presentación de la página.
+var min = 2;  //Minutos (valor inicial y máximo pues al inicial el juego se reinicia a cero)
+var seg = 0;  //Segundos (valor inicial)
+var ori = ""; //Almacena la referencia a la posición de origen de un elemento
+var dst = ""; //Almacena la referencia a la posición de destino de un elemento
+var dsp = 0;  //Despalzamiento solicitado para un elemento entre su posición de origen y la de destino
 
-if (sessionStorage.getItem("iniciado")){}else{sessionStorage.setItem("iniciado", 0)};
+if (sessionStorage.getItem("jugando")){}else{sessionStorage.setItem("jugando", 0)};
 
 setInterval(function(){tiempo()}, 100);
 
@@ -15,12 +16,12 @@ function tiempo() {
         miColor = 'rgb(220, 255, 14)'
     };
     $('.main-titulo').css('color', miColor);
-    if (sessionStorage.getItem("iniciado")==1){
+    if (sessionStorage.getItem("jugando")==1){
         if (seg <= 0) {
             if (min <= 0) {
                     min = 2;
                     seg = 0;
-                    sessionStorage.setItem("iniciado", 0);
+                    sessionStorage.setItem("jugando", 0);
             } else {
                     min -= 1;
                     seg = 59;
@@ -41,7 +42,7 @@ function enteroAleatorio(min, max) {
 };
 
 function iniciarJuego() {
-  if (sessionStorage.getItem("iniciado")==1){
+  if (sessionStorage.getItem("jugando")==1){
     
     var columnas = $('[class^="col-"]');
 
@@ -58,7 +59,7 @@ $(function() {
   iniciarJuego();
 
 	$('.btn-reinicio').click(function(){
-    sessionStorage.setItem("iniciado", 1);
+    sessionStorage.setItem("jugando", 1);
     location.reload();
   });
 
@@ -74,7 +75,13 @@ $(function() {
     accept: ".draggable",
     drop: function(event, ui) {
       dst = $(this).attr("id")
-      if(dst != ori) {
+      //Determino el desplazamiento para el elemento sabiendo que he identificado cada contenedor
+      // con un número correlativo tanto de columna como de fila, por lo que mediante la obtención
+      // de la diferencia entre la posición de origen y la de destino, puedo determinar
+      // cuántos espacios se desplazaría el elemento y permito que se realice solo cuando este valor sea igual a uno.
+      dsp = Math.abs(parseInt(ori.substring(5, 6))-parseInt(dst.substring(5, 6)))
+          + Math.abs(parseInt(ori.substring(6, 7))-parseInt(dst.substring(6, 7)))
+      if(dst != ori && dsp == 1) {
         $("#" + $("#" + dst + " > div").attr("id")).appendTo($("#" + ori));
         $(ui.draggable)
           .css({left: "auto", top: "auto"})
@@ -84,4 +91,4 @@ $(function() {
   });
 });
 
-// Julian Toledo - 20200708 10:30 +/-
+// Julian Toledo - 20200708 11:20 +/-
