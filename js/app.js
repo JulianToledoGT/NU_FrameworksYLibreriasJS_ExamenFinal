@@ -6,9 +6,6 @@ var ori = ""; //Almacena la referencia a la posición de origen de un elemento
 var dst = ""; //Almacena la referencia a la posición de destino de un elemento
 var col = []; //Lista dulces en una columna
 var mtz = []; //Matriz con el contenido del tablero
-var mbk = []; //Copia temporal de la matriz para evaluar y validar coincidencia de elementos tras movimientos
-var mmz = [];
-var pvt = 0;
 var x1 = 0;
 var y1 = 0;
 var x2 = 0;
@@ -52,14 +49,27 @@ function enteroAleatorio(min, max) {
 };
 
 function llenarColumna(obj, ini) {
-//TODO: Agregar animación para que parezca que los duclces están descendiendo  
-  let num = 6;
   let dulce = 0;
   if (ini == true){col = [];}
-  for (var i = 0; i <= num; i++) {
+  for (var i = 0; i <= 6; i++) {
     dulce = enteroAleatorio(1, 5);
+
+    if (i > 1 && mtz.length > 2){
+      while ((dulce == mtz[mtz.length-1][i] && dulce == mtz[mtz.length-2][i]) || (dulce == col[i-1] && dulce == col[i-2]))
+      {dulce = enteroAleatorio(1, 5)};
+    }else{
+      if (i > 1){
+        while (dulce == col[i-1] && dulce == col[i-2])
+        {dulce = enteroAleatorio(1, 5);};
+      }else{
+        if (mtz.length > 2){
+          while (dulce == mtz[mtz.length-1][i] && dulce == mtz[mtz.length-2][i])
+          {dulce = enteroAleatorio(1, 5)};
+        }
+      }
+    };
     $(obj).append('<div id="a' + $(obj).attr("class") + i + '" class="elemento"><div id="b' + $(obj).attr("class") + i + '" class="draggable dulce' + dulce + '"></div></div>');
-    col.push(dulce)
+    col.push(dulce);
   };
 };
 
@@ -73,14 +83,27 @@ function llenarMatriz(ini) {
 };
 
 function actualizarMatriz(){
-  mbk = mtz;
+  let mbk = []; //Copia temporal de la matriz para evaluar y validar coincidencia de elementos tras movimientos
+  //Asignamos los valores a la matriz evitando la asignación por referencia.
+  for (var i = 0; i < 7; i++){
+    mbk.push(mtz[i].slice())
+  };
   //Realizamos el intercambio de piezas del último movimiento que hizo el usuario
-  pvt = mtz[x1][y1];
+  let pvt = mtz[x1][y1];
   mtz[x1][y1] = mtz[x2][y2];
   mtz[x2][y2] = pvt;
   //Verificamos los elemento de la matriz para identificar los casos en que hayan coincidencias
   if (verificarMatriz()){
-    //Si el movimiento es válido, desplazar los elementos del tablero e incrementar el contador de movimiento
+    //Si el movimiento es válido,
+      //recorrer la matriz,
+        //ocultar el contenido de los contenedores correspondientes a las posiciones de la patriz que tengan cero
+        //intercambiar el contenido de los contenedores con posición cero con el inmediato superior y también los valores de la matriz
+        //reiterar la instrucción anterior hasta asegurarnos que no haya un elemento cero con un elemento superior diferente a cero
+      //recorrer la matriz
+        //remplazar los valores cero (por otros obtenidos al azar)
+        //mostrar el contenido de los contenedores
+
+      //incrementar el contador de movimiento
     $('#movimientos-text').text(Number($('#movimientos-text').text()) + 1);
   }else{
     mtz = mbk;  //Si el movimiento no es válido, restablecemos los valores de las posiciones en los elementos
@@ -100,8 +123,7 @@ function verificarMatriz(){
     xmz.push(mtz[i].slice())
   };
   
-  console.log('xmz1\n');
-  console.log(xmz[0].map((_, c4) => xmz.map(row => row[c4])));
+  //console.log(xmz[0].map((_, c4) => xmz.map(row => row[c4])));
   for (var i = 0; i < 7; i++){
     for (var j = 0; j < 7; j++){
       if (i < 5){
@@ -122,9 +144,20 @@ function verificarMatriz(){
       }
     };
   };
-  console.log('omt2\n');
-  console.log(omt[0].map((_, c4) => omt.map(row => row[c4])));
-  mmz = omt;
+  //console.log(omt[0].map((_, c4) => omt.map(row => row[c4])));
+  mtz = omt;
+  console.log(mtz[0].map((_, c4) => mtz.map(row => row[c4])));
+  // let ii = 0;
+  // for (var i = 0; i < 7; i++){
+  //   for (var j = 0; j < 7; j++){
+  //     if (mtz[i][j] == 0){
+  //       ii = i + 1;
+  //       console.log("acol-"+ii+j);
+  //       $("#acol-"+ii+j).find(".draggable").hide(1000); //$("#acol-"+ii+j).hide(1000);
+  //     };
+  //   };
+  // };
+
   return ok;
 //TODO: ir marcando los objetos del tablero y marcar las posiciones relacionadas a elementos eliminados (agregar una clase)
 //TODO: eliminar los objetos marcados con la clase (debe usarse una animación)
@@ -141,6 +174,21 @@ function iniciarJuego() {
 //para obtener todos los dulces de una columna (no una fila)
 //mtz.map(function(value,index) { return value[2]; })
 //$(this).append('<div id="a' + $(this).attr("class") + i + '" class="elemento"><div id="b' + $(this).attr("class") + i + '" class="draggable dulce' + dulce + '"></div></div>');
+
+function quitarDulces(){
+
+  let ii = 0;
+  for (var i = 0; i < 7; i++){
+    for (var j = 0; j < 7; j++){
+      if (mtz[i][j] == 0){
+        ii = i + 1;
+        console.log("acol-"+ii+j);
+        $("#acol-"+ii+j).find(".draggable").hide(1000); //$("#acol-"+ii+j).hide(1000);
+      };
+    };
+  };
+
+}
 
 function finalizaJuego() {
 	$("div.panel-tablero, div.time").effect("fold");
@@ -174,15 +222,17 @@ $(function() {
       y1 = parseInt(ori.substring(6, 7));
       y2 = parseInt(dst.substring(6, 7));
       dsp = Math.abs(x1-x2) + Math.abs(y1-y2);
-      if(dst != ori && dsp == 1) {  //Limitamos los movimientos a un espacio sin permitir movimientos en ddiagonal.
+      //console.log(ori+'\n'+dst);
+      if(dst != ori && dsp == 1) {  //Limitamos los movimientos a un espacio sin permitir movimientos en diagonal.
         actualizarMatriz();
         $("#" + $("#" + dst + " > div").attr("id")).appendTo($("#" + ori));
         $(ui.draggable)
           .css({left: "auto", top: "auto"})
-          .appendTo($(this))
+          .appendTo($(this));
+          quitarDulces();
       };
     }
   });
 });
 
-// Julian Toledo - 20210117 14:30 +/-
+// Julian Toledo - 20210117 23:15 +/-
