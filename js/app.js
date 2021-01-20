@@ -275,4 +275,20 @@ function moveup(){
 };
 */
 
+/*
+var blink = 1;
+var tmr2 = setInterval(() => byeBlinking(), 100);
 
+function byeBlinking(){
+    if (blink == 1 || blink == 3){
+        $("#bcol-62").css("opacity", 0.2);
+        blink += 1;
+    }else if(blink == 2 || blink == 4){
+        $("#bcol-62").css("opacity", 1);
+        blink += 1;
+    }else if(blink == 5){
+        $("#bcol-62").css("opacity", 0);
+        clearInterval(tmr2);
+    }
+};
+*/
