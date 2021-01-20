@@ -119,6 +119,7 @@ function verificarMatriz(){
           omt[i][j] = 0;
           omt[i+1][j] = 0;
           omt[i+2][j] = 0;
+          $('#score-text').text(Number($('#score-text').text()) + 30);
           ok = true;
         };
       }
@@ -127,6 +128,7 @@ function verificarMatriz(){
           omt[i][j] = 0;
           omt[i][j+1] = 0;
           omt[i][j+2] = 0;
+          $('#score-text').text(Number($('#score-text').text()) + 30);
           ok = true;
         };
       }
@@ -145,28 +147,61 @@ function iniciarJuego() {
 };
 
 function quitarDulces(){
-
-
-    //Si el movimiento es válido,
-      //recorrer la matriz,
-        //ocultar el contenido de los contenedores correspondientes a las posiciones de la patriz que tengan cero
-        //intercambiar el contenido de los contenedores con posición cero con el inmediato superior y también los valores de la matriz
-        //reiterar la instrucción anterior hasta asegurarnos que no haya un elemento cero con un elemento superior diferente a cero
-      //recorrer la matriz
-        //remplazar los valores cero (por otros obtenidos al azar)
-        //mostrar el contenido de los contenedores
-
-
-  let ii = 0;
-  for (var i = 0; i < 7; i++){
+  //Si el movimiento es válido,
+    //ocultar los objetos que coincidan con las posiciones de la matriz en cero,
+    for (var i = 0; i < 7; i++){
     for (var j = 0; j < 7; j++){
       if (mtz[i][j] == 0){
-        ii = i + 1;
-        console.log("acol-"+ii+j);
-        $("#acol-"+ii+j).find(".draggable").hide(1000); //$("#acol-"+ii+j).hide(1000);
+        let dulce = $("#acol-"+(i+1)+j).find(".draggable");
+        dulce.hide(1000, 'linear');
       };
     };
   };
+
+  //Si el movimiento es válido,
+    //recorrer la matriz,
+      //intercambiar el contenido de los contenedores con posición cero con el inmediato superior y también los valores de la matriz
+      //reiterar la instrucción anterior hasta asegurarnos que no haya un elemento cero con un elemento superior diferente a cero
+/*
+  let d1;
+  let d2;
+  
+  for (var i = 0; i < 7; i++){
+    for (var j = 6; j > 0; j--){
+      for (var k = 6; k > 0; k--){
+        if(mtz[i][k] === 0){
+          mtz[i][k] = mtz[i][k-1];
+          mtz[i][k-1] = 0;
+
+          d1 = $("#acol-"+i+k).find(".draggable");
+          d2 = $("#acol-"+i+(k-1)).find(".draggable");
+
+          $("#" + d1.attr("id")).remove();
+          $("#" + d2.attr("id")).remove();
+          $("#acol-"+i+(k-1)).append(d1);
+          $("#acol-"+i+(k-1)).append(d2);
+          //console.log('el contenido de "acol-' +i+k+ '" se trasladará a "acol-' +i+(k-1)+ '"');
+          //console.log(a.attr("id")+ " -- " + b.attr("id"));
+
+        // $("#" + $("#" + dst + " > div").attr("id")).appendTo($("#" + ori));
+        // $(ui.draggable)
+        //   .css({left: "auto", top: "auto"})
+        //   .appendTo($(this));
+
+
+        };
+      };
+    };        
+  };
+*/    
+  console.log(mtz[0].map((_, c4) => mtz.map(row => row[c4])));
+
+  //recorrer la matriz
+    //remplazar los valores cero (por otros obtenidos al azar)
+    //mostrar el contenido de los contenedores
+
+
+
 };
 
 function finalizaJuego() {
@@ -214,4 +249,30 @@ $(function() {
   });
 });
 
-// Julian Toledo - 20210117 23:30 +/-
+// Julian Toledo - 20210119 22:40 +/-
+
+/*
+var rowi = 6;
+
+let dlcx = $("#acol-4"+rowi).find(".draggable");
+dlcx.hide(200);
+
+var tmr1 = setInterval(() => moveup(), 200);
+
+function moveup(){
+    console.log(1);
+    if(rowi > 0){
+        let dlca = $("#acol-4"+rowi).find(".draggable");
+        let dlcb = $("#acol-4"+(rowi-1)).find(".draggable");
+        dlca.remove();
+        dlcb.remove();
+        $("#acol-4"+rowi).append(dlcb);
+        $("#acol-4"+(rowi-1)).append(dlca);
+        rowi -= 1;
+    }else{
+        clearInterval(tmr1);
+    };
+};
+*/
+
+
