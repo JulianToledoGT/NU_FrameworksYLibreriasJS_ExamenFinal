@@ -10,7 +10,20 @@ var x1 = 0;
 var y1 = 0;
 var x2 = 0;
 var y2 = 0;
- 
+var blnk;
+var dlcx;
+var tmr1;
+
+var tmrc1;
+var tmrc2;
+var tmrc3;
+var tmrc4;
+var tmrc5;
+var tmrc6;
+var tmrc7;
+
+
+
 if (sessionStorage.getItem("jugando")){}else{sessionStorage.setItem("jugando", 0)};
 
 setInterval(function(){tiempo()}, 1000);
@@ -149,59 +162,106 @@ function iniciarJuego() {
 function quitarDulces(){
   //Si el movimiento es válido,
     //ocultar los objetos que coincidan con las posiciones de la matriz en cero,
-    for (var i = 0; i < 7; i++){
+  for (var i = 0; i < 7; i++){
     for (var j = 0; j < 7; j++){
       if (mtz[i][j] == 0){
         let dulce = $("#acol-"+(i+1)+j).find(".draggable");
-        dulce.hide(1000, 'linear');
+        dulce.addClass("byeBlinking");
       };
     };
   };
+  blnk = 1;
+  tmr1 = setInterval(() => byeBlinking(), 200);
 
   //Si el movimiento es válido,
     //recorrer la matriz,
       //intercambiar el contenido de los contenedores con posición cero con el inmediato superior y también los valores de la matriz
       //reiterar la instrucción anterior hasta asegurarnos que no haya un elemento cero con un elemento superior diferente a cero
-/*
-  let d1;
-  let d2;
   
-  for (var i = 0; i < 7; i++){
-    for (var j = 6; j > 0; j--){
-      for (var k = 6; k > 0; k--){
-        if(mtz[i][k] === 0){
-          mtz[i][k] = mtz[i][k-1];
-          mtz[i][k-1] = 0;
-
-          d1 = $("#acol-"+i+k).find(".draggable");
-          d2 = $("#acol-"+i+(k-1)).find(".draggable");
-
-          $("#" + d1.attr("id")).remove();
-          $("#" + d2.attr("id")).remove();
-          $("#acol-"+i+(k-1)).append(d1);
-          $("#acol-"+i+(k-1)).append(d2);
-          //console.log('el contenido de "acol-' +i+k+ '" se trasladará a "acol-' +i+(k-1)+ '"');
-          //console.log(a.attr("id")+ " -- " + b.attr("id"));
-
-        // $("#" + $("#" + dst + " > div").attr("id")).appendTo($("#" + ori));
-        // $(ui.draggable)
-        //   .css({left: "auto", top: "auto"})
-        //   .appendTo($(this));
-
-
-        };
-      };
-    };        
-  };
-*/    
-  console.log(mtz[0].map((_, c4) => mtz.map(row => row[c4])));
+  //tmrc1 = setInterval(() => moveup(1), 200);
+  //tmrc2 = setInterval(() => moveup(2), 200);
+  //tmrc3 = setInterval(() => moveup(3), 200);
+  tmrc4 = setInterval(() => moveup(4), 200);
+  //tmrc5 = setInterval(() => moveup(5), 200);
+  //tmrc6 = setInterval(() => moveup(6), 200);
+  //tmrc7 = setInterval(() => moveup(7), 200);
 
   //recorrer la matriz
     //remplazar los valores cero (por otros obtenidos al azar)
     //mostrar el contenido de los contenedores
+};
 
+function byeBlinking(){
+  if (blnk == 1 || blnk == 3){
+      $(".byeBlinking").css("opacity", 0.2);
+      blnk += 1;
+  }else if(blnk == 2 || blnk == 4){
+      $(".byeBlinking").css("opacity", 1);
+      blnk += 1;
+  }else if(blnk == 5){
+      $(".byeBlinking").css("opacity", 0);
+      $(".byeBlinking").removeClass("byeBlinking");
+      clearInterval(tmr1);
+  };
+};
 
+function moveup(clmn){
+  let rowi = 1;
+  while ( //ubico el primer elemento que necesita ser movido
+    rowi < 6
+    && (mtz[clmn-1][rowi] != 0
+      || (mtz[clmn-1][rowi] == 0
+        && mtz[clmn-1][rowi-1] == 0)
+      )){
+    rowi += 1;
+  };
 
+  console.log(
+    clmn + '-' + 
+    rowi + ' : ' +
+    mtz[clmn-1][rowi]  + ' : ' + 
+    mtz[clmn-1][rowi] + ' : ' + 
+    mtz[clmn-1][rowi-1] +
+    ''
+  );
+  
+
+  if(rowi > 0 && mtz[clmn-1][rowi-1] != 0){
+      //console.log('moveup: ' + clmn + '-' + rowi)
+      let dlca = $("#acol-"+clmn+rowi).find(".draggable");
+      let dlcb = $("#acol-"+clmn+(rowi-1)).find(".draggable");
+      dlca.remove();
+      dlcb.remove();
+      $("#acol-"+clmn+rowi).append(dlcb);
+      $("#acol-"+clmn+(rowi-1)).append(dlca);
+      mtz[clmn-1][rowi] = mtz[clmn-1][rowi-1];
+      mtz[clmn-1][rowi-1] = 0;  //porque se hará únicamente cuando sea igual a cero
+      rowi -= 1;
+  }else{
+    switch (clmn){
+      case 1:
+        clearInterval(tmrc1);
+        break;
+      case 2:
+        clearInterval(tmrc2);
+        break;
+      case 3:
+        clearInterval(tmrc3);
+        break;
+      case 4:
+        clearInterval(tmrc4);
+        break;
+      case 5:
+        clearInterval(tmrc5);
+        break;
+      case 6:
+        clearInterval(tmrc6);
+        break;
+      case 7:
+        clearInterval(tmrc7);
+        break;
+    };
+  };
 };
 
 function finalizaJuego() {
@@ -249,46 +309,5 @@ $(function() {
   });
 });
 
-// Julian Toledo - 20210119 22:40 +/-
-
-/*
-var rowi = 6;
-
-let dlcx = $("#acol-4"+rowi).find(".draggable");
-dlcx.hide(200);
-
-var tmr1 = setInterval(() => moveup(), 200);
-
-function moveup(){
-    console.log(1);
-    if(rowi > 0){
-        let dlca = $("#acol-4"+rowi).find(".draggable");
-        let dlcb = $("#acol-4"+(rowi-1)).find(".draggable");
-        dlca.remove();
-        dlcb.remove();
-        $("#acol-4"+rowi).append(dlcb);
-        $("#acol-4"+(rowi-1)).append(dlca);
-        rowi -= 1;
-    }else{
-        clearInterval(tmr1);
-    };
-};
-*/
-
-/*
-var blink = 1;
-var tmr2 = setInterval(() => byeBlinking(), 100);
-
-function byeBlinking(){
-    if (blink == 1 || blink == 3){
-        $("#bcol-62").css("opacity", 0.2);
-        blink += 1;
-    }else if(blink == 2 || blink == 4){
-        $("#bcol-62").css("opacity", 1);
-        blink += 1;
-    }else if(blink == 5){
-        $("#bcol-62").css("opacity", 0);
-        clearInterval(tmr2);
-    }
-};
-*/
+// Julian Toledo - 20210120 22:00 +/-
+//console.log(mtz[0].map((_, c4) => mtz.map(row => row[c4])));
