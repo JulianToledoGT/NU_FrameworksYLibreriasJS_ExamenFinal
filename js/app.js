@@ -14,16 +14,6 @@ var blnk;
 var dlcx;
 var tmr1;
 
-var tmrc1;
-var tmrc2;
-var tmrc3;
-var tmrc4;
-var tmrc5;
-var tmrc6;
-var tmrc7;
-
-
-
 if (sessionStorage.getItem("jugando")){}else{sessionStorage.setItem("jugando", 0)};
 
 setInterval(function(){tiempo()}, 1000);
@@ -148,7 +138,6 @@ function verificarMatriz(){
     };
   };
   mtz = omt;
-  //console.log(mtz[0].map((_, c4) => mtz.map(row => row[c4])));
   return ok;
 };
 
@@ -160,8 +149,6 @@ function iniciarJuego() {
 };
 
 function quitarDulces(){
-  //Si el movimiento es válido,
-    //ocultar los objetos que coincidan con las posiciones de la matriz en cero,
   for (var i = 0; i < 7; i++){
     for (var j = 0; j < 7; j++){
       if (mtz[i][j] == 0){
@@ -172,95 +159,43 @@ function quitarDulces(){
   };
   blnk = 1;
   tmr1 = setInterval(() => byeBlinking(), 200);
-
-  //Si el movimiento es válido,
-    //recorrer la matriz,
-      //intercambiar el contenido de los contenedores con posición cero con el inmediato superior y también los valores de la matriz
-      //reiterar la instrucción anterior hasta asegurarnos que no haya un elemento cero con un elemento superior diferente a cero
-  
-  //tmrc1 = setInterval(() => moveup(1), 200);
-  //tmrc2 = setInterval(() => moveup(2), 200);
-  //tmrc3 = setInterval(() => moveup(3), 200);
-  tmrc4 = setInterval(() => moveup(4), 200);
-  //tmrc5 = setInterval(() => moveup(5), 200);
-  //tmrc6 = setInterval(() => moveup(6), 200);
-  //tmrc7 = setInterval(() => moveup(7), 200);
-
-  //recorrer la matriz
-    //remplazar los valores cero (por otros obtenidos al azar)
-    //mostrar el contenido de los contenedores
 };
 
 function byeBlinking(){
   if (blnk == 1 || blnk == 3){
-      $(".byeBlinking").css("opacity", 0.2);
-      blnk += 1;
+    $(".byeBlinking").css("opacity", 0.2);
+    blnk += 1;
   }else if(blnk == 2 || blnk == 4){
-      $(".byeBlinking").css("opacity", 1);
-      blnk += 1;
+    $(".byeBlinking").css("opacity", 1);
+    blnk += 1;
   }else if(blnk == 5){
-      $(".byeBlinking").css("opacity", 0);
-      $(".byeBlinking").removeClass("byeBlinking");
-      clearInterval(tmr1);
-  };
-};
+    $(".byeBlinking").css("opacity", 0);
+    $(".byeBlinking").removeClass("byeBlinking");
+    clearInterval(tmr1);
 
-function moveup(clmn){
-  let rowi = 1;
-  while ( //ubico el primer elemento que necesita ser movido
-    rowi < 6
-    && (mtz[clmn-1][rowi] != 0
-      || (mtz[clmn-1][rowi] == 0
-        && mtz[clmn-1][rowi-1] == 0)
-      )){
-    rowi += 1;
-  };
+    //Recorro la matriz asignando valores a los que tienen cero y los hago visibles
+    let dulce = 0;
+    let divab;
 
-  console.log(
-    clmn + '-' + 
-    rowi + ' : ' +
-    mtz[clmn-1][rowi]  + ' : ' + 
-    mtz[clmn-1][rowi] + ' : ' + 
-    mtz[clmn-1][rowi-1] +
-    ''
-  );
-  
-
-  if(rowi > 0 && mtz[clmn-1][rowi-1] != 0){
-      //console.log('moveup: ' + clmn + '-' + rowi)
-      let dlca = $("#acol-"+clmn+rowi).find(".draggable");
-      let dlcb = $("#acol-"+clmn+(rowi-1)).find(".draggable");
-      dlca.remove();
-      dlcb.remove();
-      $("#acol-"+clmn+rowi).append(dlcb);
-      $("#acol-"+clmn+(rowi-1)).append(dlca);
-      mtz[clmn-1][rowi] = mtz[clmn-1][rowi-1];
-      mtz[clmn-1][rowi-1] = 0;  //porque se hará únicamente cuando sea igual a cero
-      rowi -= 1;
-  }else{
-    switch (clmn){
-      case 1:
-        clearInterval(tmrc1);
-        break;
-      case 2:
-        clearInterval(tmrc2);
-        break;
-      case 3:
-        clearInterval(tmrc3);
-        break;
-      case 4:
-        clearInterval(tmrc4);
-        break;
-      case 5:
-        clearInterval(tmrc5);
-        break;
-      case 6:
-        clearInterval(tmrc6);
-        break;
-      case 7:
-        clearInterval(tmrc7);
-        break;
+    for (var i = 0; i < 7; i++){
+      for(var j = 0; j < 7; j++){
+        if(mtz[i][j] == 0){
+          dulce = enteroAleatorio(1, 5);
+          mtz[i][j] = dulce;
+          divab = $("#acol-"+(i+1)+j).find(".draggable");
+          divab.removeClass("dulce1");
+          divab.removeClass("dulce2");
+          divab.removeClass("dulce3");
+          divab.removeClass("dulce4");
+          divab.addClass("dulce"+dulce);
+          divab.css("opacity", 1);
+          divab.hide(100);
+          divab.show(100);
+        };
+      };
     };
+    verificarMatriz();
+    quitarDulces();
   };
 };
 
@@ -296,7 +231,6 @@ $(function() {
       y1 = parseInt(ori.substring(6, 7));
       y2 = parseInt(dst.substring(6, 7));
       dsp = Math.abs(x1-x2) + Math.abs(y1-y2);
-      //console.log(ori+'\n'+dst);
       if(dst != ori && dsp == 1) {  //Limitamos los movimientos a un espacio sin permitir movimientos en diagonal.
         actualizarMatriz();
         $("#" + $("#" + dst + " > div").attr("id")).appendTo($("#" + ori));
@@ -309,5 +243,4 @@ $(function() {
   });
 });
 
-// Julian Toledo - 20210120 22:00 +/-
-//console.log(mtz[0].map((_, c4) => mtz.map(row => row[c4])));
+// Julian Toledo - 20210121 23:00 +/-
